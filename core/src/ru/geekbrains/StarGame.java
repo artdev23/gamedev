@@ -4,6 +4,7 @@ package ru.geekbrains;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import static com.badlogic.gdx.Gdx.gl;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -15,13 +16,15 @@ public class StarGame
 
   private SpriteBatch batch;
   private Texture img;
+  private TextureRegion region;
 
 
   @Override
   public void create()
   {
 	batch = new SpriteBatch();
-	img = new Texture("badlogic.jpg");
+	img = new Texture("background.jpg");
+	region = new TextureRegion(img);
   }
 
 
@@ -34,7 +37,8 @@ public class StarGame
 	batch.begin();
 
 	batch.disableBlending();
-	batch.draw(img, 0, 0);
+	batch.setColor(0.8f, 0, 0.8f, 1);
+	batch.draw(region, 0, 0, 1024, 512);
 	batch.enableBlending();
 
 	batch.end();
