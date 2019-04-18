@@ -1,6 +1,7 @@
 package ru.geekbrains.screen;
 
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,23 +10,28 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
-import ru.geekbrains.sprite.Ship;
-import ru.geekbrains.sprite.Star;
+import ru.geekbrains.sprite.ExitButton;
+import ru.geekbrains.sprite.PlayButton;
 
 
-public class GameScreen
+public class MenuScreen
 		extends BaseScreen
 {
+
+  private Game game;
 
   private Texture bg;
   private Background background;
   private TextureAtlas atlas;
-  private Star starList[];
-  private Texture txr;
-  private TextureRegion reg;
-  private Ship ship;
 
-  private static final int starCount = 128;
+  private ExitButton buttonExit;
+  private PlayButton buttonPlay;
+
+
+  public MenuScreen(Game game)
+  {
+	this.game = game;
+  }
 
 
   @Override
@@ -33,20 +39,13 @@ public class GameScreen
   {
 	super.show();
 
-	bg = new Texture("textures/background.png");
+	bg = new Texture("textures/menuBg.jpg");
 	background = new Background(new TextureRegion(bg));
 
 	atlas = new TextureAtlas("textures/menuAtlas.tpack");
 
-	starList = new Star[starCount];
-	for (int i = 0; i < starList.length; i++)
-	{
-	  starList[i] = new Star(atlas);
-	}
-
-	txr = new Texture("textures/ship.png");
-	reg = new TextureRegion(txr);
-	ship = new Ship(reg);
+	buttonExit = new ExitButton(atlas);
+	buttonPlay = new PlayButton(atlas, game);
   }
 
 
@@ -56,12 +55,8 @@ public class GameScreen
 	super.resize(worldBounds);
 
 	background.resize(worldBounds);
-	ship.resize(worldBounds);
-
-	for (Star star : starList)
-	{
-	  star.resize(worldBounds);
-	}
+	buttonExit.resize(worldBounds);
+	buttonPlay.resize(worldBounds);
   }
 
 
@@ -69,37 +64,20 @@ public class GameScreen
   public void render(float delta)
   {
 	super.render(delta);
-
-	update(delta);
-	draw(delta);
+	draw();
   }
 
 
-  private void draw(float delta)
+  private void draw()
   {
 	batch.begin();
 
+	batch.setColor(0.8f, 0.1f, 0.8f, 1);
 	background.draw(batch);
-
-	for (Star star : starList)
-	{
-	  star.draw(batch);
-	}
-
-	ship.draw(batch);
+	buttonExit.draw(batch);
+	buttonPlay.draw(batch);
 
 	batch.end();
-  }
-
-
-  private void update(float delta)
-  {
-	ship.update(delta);
-
-	for (Star star : starList)
-	{
-	  star.update(delta);
-	}
   }
 
 
@@ -108,14 +86,25 @@ public class GameScreen
   {
 	super.dispose();
 	bg.dispose();
+	atlas.dispose();
   }
 
 
   @Override
   public boolean touchDown(Vector2 touch, int pointer)
   {
-	super.touchDown(touch, pointer);
-	ship.touchDown(touch, pointer);
+	buttonExit.touchDown(touch, pointer);
+	buttonPlay.touchDown(touch, pointer);
+
+	return false;
+  }
+
+
+  @Override
+  public boolean touchUp(Vector2 touch, int pointer)
+  {
+	buttonExit.touchUp(touch, pointer);
+	buttonPlay.touchUp(touch, pointer);
 
 	return false;
   }
