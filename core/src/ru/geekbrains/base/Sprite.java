@@ -33,6 +33,14 @@ public class Sprite
   }
 
 
+  public void setWidthProportion(float width)
+  {
+	setWidth(width);
+	float aspect = regions[frame].getRegionWidth() / (float) regions[frame].getRegionHeight();
+	setHeight(width / aspect);
+  }
+
+
   public void resize(Rect worldBounds)
   {
 

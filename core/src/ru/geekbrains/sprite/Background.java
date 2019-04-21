@@ -21,8 +21,15 @@ public class Background
   @Override
   public void resize(Rect worldBounds)
   {
+	float w = worldBounds.getWidth();
 	float h = worldBounds.getHeight();
 	setHeightProportion(h);
+
+	boolean aspectLess = (getWidth() / getHeight()) < (w / h);
+
+	if (aspectLess)
+	  setWidthProportion(w);
+
 	pos.set(worldBounds.pos);
   }
 

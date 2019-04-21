@@ -3,7 +3,8 @@ package ru.geekbrains;
 
 import com.badlogic.gdx.Game;
 
-import ru.geekbrains.screen.GameScreen;
+import ru.geekbrains.base.BaseScreen;
+import ru.geekbrains.screen.MenuScreen;
 
 
 public class StarGame
@@ -15,7 +16,7 @@ public class StarGame
   @Override
   public void create()
   {
-	GameScreen scr = new GameScreen();
+	BaseScreen scr = new MenuScreen(this);
 	setScreen(scr);
   }
 
