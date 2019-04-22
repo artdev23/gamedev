@@ -32,7 +32,7 @@ public class EnemyShip
   {
 	this.worldBounds = worldBounds;
 
-	setBottom(worldBounds.getBottom() + 0.05f);
+	setBottom(worldBounds.getTop() - 0.0005f);
 	float posX = nextFloat(worldBounds.getLeft(), worldBounds.getRight() - getWidth());
 	setLeft(posX);
   }
