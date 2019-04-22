@@ -1,92 +1,221 @@
 package ru.geekbrains.sprite;
 
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.Sprite;
 import ru.geekbrains.math.Rect;
+import ru.geekbrains.pool.BulletPool;
 
 
 public class Ship
 		extends Sprite
 {
 
-  private Vector2 v;
-  private Vector2 destPos;
-  private Vector2 buf;
+  private final Vector2 v = new Vector2();
   private Rect worldBounds;
   private Rect moveBounds;
-  private float speed = 0.01f;
 
-  private static final float height = 0.1f;
+  private final BulletPool bulletPool;
+  private final TextureRegion bulletRegion;
+  private final Vector2 bulletV = new Vector2(0f, 0.5f);
+
+  private boolean pressedRight;
+  private boolean pressedLeft;
+  private int rightPointer = INVALID_POINTER;
+  private int leftPointer = INVALID_POINTER;
+
+  private final float reloadInterval = 0.1f;
+  private float reloadTimer;
 
 
-  public Ship(TextureAtlas atlas)
-  {
-	this(atlas.findRegion("ship"));
-  }
+  private static final float HEIGHT = 0.1f;
+  private static final int INVALID_POINTER = -1;
+  private static final float BULLET_HEIGHT = 0.005f;
 
 
-  public Ship(TextureRegion region)
+  public Ship(TextureRegion region, TextureRegion bulletRegion, BulletPool bulletPool)
   {
 	super(region);
 
-	v = new Vector2();
-	destPos = new Vector2();
-	buf = new Vector2();
-
-	setHeightProportion(height);
-	setBottom(-0.4f);
+	this.bulletPool = bulletPool;
+	this.bulletRegion = bulletRegion;
+	setHeightProportion(HEIGHT);
   }
 
 
   @Override
   public void resize(Rect worldBounds)
   {
+	super.resize(worldBounds);
+
 	this.worldBounds = worldBounds;
 	moveBounds = new Rect(worldBounds);
 	moveBounds.setTop(0);
 
-	setHeightProportion(height);
-  }
-
-
-  @Override
-  public boolean touchDown(Vector2 touch, int pointer)
-  {
-	destPos.set(touch);
-	v = touch.cpy()
-			 .sub(pos)
-			 .setLength(speed);
-
-	return false;
+	setHeightProportion(HEIGHT);
+	setBottom(worldBounds.getBottom() + 0.05f);
   }
 
 
   @Override
   public void update(float delta)
   {
-	buf.set(destPos);
+	super.update(delta);
 
-	if (buf.sub(pos).len() < v.len())
+	pos.mulAdd(v, delta);
+
+	reloadTimer += delta;
+	if (reloadTimer >= reloadInterval)
 	{
-	  pos.set(destPos);
+	  reloadTimer = 0f;
+	  shoot();
+	}
+
+	if (getRight() > worldBounds.getRight())
+	{
+	  setRight(worldBounds.getRight());
+	  stop();
+	}
+
+	if (getLeft() < worldBounds.getLeft())
+	{
+	  setLeft(worldBounds.getLeft());
+	  stop();
+	}
+  }
+
+
+  public boolean keyDown(int keycode)
+  {
+	switch (keycode)
+	{
+	  case Keys.A:
+	  case Keys.LEFT:
+		pressedLeft = true;
+		moveLeft();
+		break;
+
+	  case Keys.D:
+	  case Keys.RIGHT:
+		pressedRight = true;
+		moveRight();
+		break;
+
+//	  case Keys.UP:
+//		shoot();
+//		break;
+	}
+
+	return false;
+  }
+
+
+  public boolean keyUp(int keycode)
+  {
+	switch (keycode)
+	{
+	  case Keys.A:
+	  case Keys.LEFT:
+	  {
+		pressedLeft = false;
+
+		if (pressedRight)
+		  moveRight();
+		else
+		  stop();
+
+		break;
+	  }
+
+	  case Keys.D:
+	  case Keys.RIGHT:
+	  {
+		pressedRight = false;
+
+		if (pressedLeft)
+		  moveLeft();
+		else
+		  stop();
+
+		break;
+	  }
+	}
+
+	return false;
+  }
+
+
+  @Override
+  public boolean touchDown(Vector2 touch, int pointer)
+  {
+	if (touch.x < worldBounds.pos.x)
+	{
+	  if (leftPointer != INVALID_POINTER) return false;
+	  leftPointer = pointer;
+	  moveLeft();
 	}
 	else
 	{
-	  pos.add(v);
+	  if (rightPointer != INVALID_POINTER) return false;
+	  rightPointer = pointer;
+	  moveRight();
 	}
 
-	if (!moveBounds.isMe(pos))
+	return false;
+  }
+
+
+  @Override
+  public boolean touchUp(Vector2 touch, int pointer)
+  {
+	if (pointer == leftPointer)
 	{
-	  if (pos.x > moveBounds.getRight()) pos.x = moveBounds.getRight();
-	  if (pos.x < moveBounds.getLeft()) pos.x = moveBounds.getLeft();
-	  if (pos.y > moveBounds.getTop()) pos.y = moveBounds.getTop();
-	  if (pos.y < moveBounds.getBottom()) pos.y = moveBounds.getBottom();
-	  v.setZero();
+	  leftPointer = INVALID_POINTER;
+
+	  if (rightPointer != INVALID_POINTER)
+		moveRight();
+	  else
+		stop();
 	}
+	else if (pointer == rightPointer)
+	{
+	  rightPointer = INVALID_POINTER;
+
+	  if (leftPointer != INVALID_POINTER)
+		moveLeft();
+	  else
+		stop();
+	}
+
+	return false;
+  }
+
+
+  private void shoot()
+  {
+	Bullet bullet = bulletPool.obtain();
+	bullet.set(this, bulletRegion, pos, bulletV, BULLET_HEIGHT, worldBounds, 1);
+  }
+
+
+  private void moveRight()
+  {
+	v.set(0.5f, 0);
+  }
+
+
+  private void moveLeft()
+  {
+	v.set(-0.5f, 0);
+  }
+
+
+  private void stop()
+  {
+	v.setZero();
   }
 
 }
