@@ -26,8 +26,7 @@ public class Bullet
 
   public void set(Object owner, TextureRegion region,
 				  Vector2 pos0, Vector2 v0,
-				  float height, Rect worldBounds, int damage
-  )
+				  float height, Rect worldBounds, int damage)
   {
 	this.owner = owner;
 	this.regions[0] = region;

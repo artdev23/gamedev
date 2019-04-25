@@ -1,49 +1,51 @@
 package ru.geekbrains.sprite;
 
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.geekbrains.base.Sprite;
+import ru.geekbrains.base.Ship;
 import ru.geekbrains.math.Rect;
-
-import static ru.geekbrains.math.Rnd.nextFloat;
+import ru.geekbrains.pool.BulletPool;
 
 
 public class EnemyShip
-		extends Sprite
+		extends Ship
 {
 
-  private final Vector2 v = new Vector2(0, -0.5f);
-  private Rect worldBounds;
+  private State state;
+  private Vector2 descentV;
+  private MainShip mainShip;
 
-  private static final float HEIGHT = 0.2f;
 
-
-  public EnemyShip(TextureRegion region)
+  public EnemyShip(MainShip mainShip, Rect worldBounds, BulletPool bulletPool, Sound shootSound)
   {
-	super(region);
-
-	setHeightProportion(HEIGHT);
-  }
-
-
-  public void setPosition(Rect worldBounds)
-  {
+	this.mainShip = mainShip;
 	this.worldBounds = worldBounds;
-
-	setBottom(worldBounds.getTop() - 0.0005f);
-	float posX = nextFloat(worldBounds.getLeft(), worldBounds.getRight() - getWidth());
-	setLeft(posX);
+	this.bulletPool = bulletPool;
+	this.shootSound = shootSound;
+	descentV = new Vector2(0, -0.3f);
+	angle = -90;
   }
 
 
-  @Override
-  public void resize(Rect worldBounds)
+  public void set(TextureRegion[] regions, Vector2 v0, TextureRegion bulletRegion,
+				  float bulletHeight, float bulletVY, int damage,
+				  float reloadInterval, float height, int hp)
   {
-	super.resize(worldBounds);
-
-	setHeightProportion(HEIGHT);
+	this.regions = regions;
+	this.v0.set(v0);
+	this.bulletRegion = bulletRegion;
+	this.bulletHeight = bulletHeight;
+	this.bulletV.set(0, bulletVY);
+	this.damage = damage;
+	this.reloadInterval = reloadInterval;
+	setHeightProportion(height);
+	this.hp = hp;
+	v.set(descentV);
+	reloadTimer = reloadInterval;
+	state = State.DESCENT;
   }
 
 
@@ -52,10 +54,31 @@ public class EnemyShip
   {
 	super.update(delta);
 
-	pos.mulAdd(v, delta);
+	if (getTop() <= worldBounds.getTop())
+	{
+	  state = State.FIGHT;
+	  v.set(v0);
+	}
+
+	if (state == State.FIGHT)
+	{
+	  reloadTimer += delta;
+	  if (reloadTimer >= reloadInterval)
+	  {
+		reloadTimer = 0f;
+		shoot();
+	  }
+	}
 
 	if (isOutside(worldBounds))
 	  destroy();
+  }
+
+
+  private enum State
+  {
+	DESCENT,
+	FIGHT
   }
 
 }

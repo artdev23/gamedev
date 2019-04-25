@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.math.Rect;
 
+import static ru.geekbrains.utils.Regions.split;
+
 
 public class Sprite
 		extends Rect
@@ -28,6 +30,12 @@ public class Sprite
   {
 	regions = new TextureRegion[1];
 	regions[0] = region;
+  }
+
+
+  public Sprite(TextureRegion region, int rows, int cols, int frames)
+  {
+	this.regions = split(region, rows, cols, frames);
   }
 
 
