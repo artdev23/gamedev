@@ -33,7 +33,7 @@ public class EnemyGenerator
   private static final float ENEMY_SMALL_HEIGHT = 0.1f;
   private static final float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
   private static final float ENEMY_SMALL_BULLET_VY = -0.3f;
-  private static final int ENEMY_SMALL_DAMAGE = 10;
+  private static final int ENEMY_SMALL_DAMAGE = 50;
   private static final float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
   private static final int ENEMY_SMALL_HP = 100;
 

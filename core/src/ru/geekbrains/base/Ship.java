@@ -7,7 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Bullet;
+import ru.geekbrains.sprite.Explosion;
 
 
 public class Ship
@@ -19,13 +21,17 @@ public class Ship
   protected Vector2 v = new Vector2();
   protected Vector2 v0 = new Vector2();
   protected BulletPool bulletPool;
+  protected ExplosionPool explosionPool;
   protected TextureRegion bulletRegion;
   protected Vector2 bulletV = new Vector2();
   protected float bulletHeight;
+
   protected int damage;
   protected int hp;
   protected float reloadInterval;
   protected float reloadTimer;
+  protected float damageAnimateInterval = 0.1f;
+  protected float damageAnimateTimer = damageAnimateInterval;
 
 
   public Ship(TextureRegion region, int rows, int cols, int frames)
@@ -57,7 +63,12 @@ public class Ship
   public void update(float delta)
   {
 	super.update(delta);
+
 	pos.mulAdd(v, delta);
+
+//	damageAnimateTimer += delta;
+//	if (damageAnimateTimer >= damageAnimateInterval)
+//	  frame = 0;
   }
 
 
@@ -73,6 +84,9 @@ public class Ship
 
   public void damage(Bullet bullet)
   {
+//	frame = 1;
+//	damageAnimateTimer = 0;
+
 	hp -= bullet.getDamage();
 	checkHP();
   }
@@ -82,9 +96,24 @@ public class Ship
   {
 	if (hp <= 0)
 	{
-	  hp = 0;
+	  boom();
 	  destroy();
 	}
+  }
+
+
+  @Override
+  public void destroy()
+  {
+	super.destroy();
+	hp = 0;
+  }
+
+
+  public void boom()
+  {
+	Explosion explosion = explosionPool.obtain();
+	explosion.set(getHeight(), pos);
   }
 
 }

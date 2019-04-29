@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.base.Ship;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 
 
 public class MainShip
@@ -23,22 +24,23 @@ public class MainShip
   private static final float HEIGHT = 0.1f;
   private static final int INVALID_POINTER = -1;
   private static final float BULLET_HEIGHT = 0.005f;
+  private static final int enemyCollisionDamage = 50;
 
 
   public MainShip(TextureRegion region, TextureRegion bulletRegion, BulletPool bulletPool,
-				  Sound shootSound)
+				  Sound shootSound, ExplosionPool explosionPool)
   {
 	super(region);
 
 	this.bulletPool = bulletPool;
 	this.bulletRegion = bulletRegion;
 	this.shootSound = shootSound;
+	this.explosionPool = explosionPool;
 	reloadInterval = 0.1f;
 	bulletV.set(0f, 0.5f);
 	bulletHeight = BULLET_HEIGHT;
 	damage = 10;
 	hp = 100;
-//	v0.set(0.5f, 0);
 	setHeightProportion(HEIGHT);
   }
 
@@ -205,7 +207,7 @@ public class MainShip
 
   public void damage(EnemyShip e)
   {
-	hp -= 50;
+	hp -= enemyCollisionDamage;
 	checkHP();
   }
 

@@ -16,13 +16,16 @@ public class EnemyShipPool
   private Rect worldBounds;
   private BulletPool bulletPool;
   private Sound shootSound;
+  private ExplosionPool explosionPool;
   private MainShip mainShip;
 
 
-  public EnemyShipPool(BulletPool bulletPool, Sound shootSound, Rect worldBounds, MainShip mainShip)
+  public EnemyShipPool(BulletPool bulletPool, Sound shootSound, ExplosionPool explosionPool,
+					   Rect worldBounds, MainShip mainShip)
   {
 	this.bulletPool = bulletPool;
 	this.shootSound = shootSound;
+	this.explosionPool = explosionPool;
 	this.worldBounds = worldBounds;
 	this.mainShip = mainShip;
   }
@@ -31,7 +34,7 @@ public class EnemyShipPool
   @Override
   protected EnemyShip newObject()
   {
-	EnemyShip ship = new EnemyShip(mainShip, worldBounds, bulletPool, shootSound);
+	EnemyShip ship = new EnemyShip(mainShip, worldBounds, bulletPool, shootSound, explosionPool);
 
 	return ship;
   }

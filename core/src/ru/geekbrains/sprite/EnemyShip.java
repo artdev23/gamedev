@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.base.Ship;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 
 
 public class EnemyShip
@@ -19,12 +20,14 @@ public class EnemyShip
   private MainShip mainShip;
 
 
-  public EnemyShip(MainShip mainShip, Rect worldBounds, BulletPool bulletPool, Sound shootSound)
+  public EnemyShip(MainShip mainShip, Rect worldBounds, BulletPool bulletPool,
+				   Sound shootSound, ExplosionPool explosionPool)
   {
 	this.mainShip = mainShip;
 	this.worldBounds = worldBounds;
 	this.bulletPool = bulletPool;
 	this.shootSound = shootSound;
+	this.explosionPool = explosionPool;
 	descentV = new Vector2(0, -0.3f);
 	angle = -90;
   }
@@ -65,7 +68,7 @@ public class EnemyShip
 	  reloadTimer += delta;
 	  if (reloadTimer >= reloadInterval)
 	  {
-		reloadTimer = 0f;
+		reloadTimer = 0;
 		shoot();
 	  }
 	}
