@@ -3,6 +3,8 @@ package ru.geekbrains.math;
 
 import com.badlogic.gdx.math.Vector2;
 
+import static java.lang.Math.sqrt;
+
 
 /**
  * Прямоугольник
@@ -151,6 +153,18 @@ public class Rect
   public String toString()
   {
 	return "Rectangle: pos" + pos + " size(" + getWidth() + ", " + getHeight() + ")";
+  }
+
+
+  public float distance(Rect rect)
+  {
+	return pos.cpy().sub(rect.pos).len();
+  }
+
+
+  public double getDiagLen()
+  {
+	return sqrt(getWidth() * getWidth() + getHeight() * getHeight());
   }
 
 }
