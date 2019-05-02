@@ -30,6 +30,7 @@ public abstract class ScaledTouchUpButton
 	this.pointer = pointer;
 	scale = PRESS_SCALE;
 	pressed = true;
+
 	return false;
   }
 
@@ -41,12 +42,11 @@ public abstract class ScaledTouchUpButton
 	  return false;
 
 	if (isMe(touch))
-	{
 	  action();
-	}
 
 	pressed = false;
-	scale = 1f;
+	scale = 1;
+
 	return false;
   }
 

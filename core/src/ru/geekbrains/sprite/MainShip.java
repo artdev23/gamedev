@@ -25,6 +25,7 @@ public class MainShip
   private static final int INVALID_POINTER = -1;
   private static final float BULLET_HEIGHT = 0.005f;
   private static final int enemyCollisionDamage = 50;
+  private static final int HP = 100;
 
 
   public MainShip(TextureRegion region, TextureRegion bulletRegion, BulletPool bulletPool,
@@ -40,7 +41,7 @@ public class MainShip
 	bulletV.set(0f, 0.5f);
 	bulletHeight = BULLET_HEIGHT;
 	damage = 10;
-	hp = 100;
+	hp = HP;
 	setHeightProportion(HEIGHT);
   }
 
@@ -209,6 +210,15 @@ public class MainShip
   {
 	hp -= enemyCollisionDamage;
 	checkHP();
+  }
+
+
+  public void reset()
+  {
+	stop();
+	flushDestroy();
+	hp = HP;
+	pos.x = worldBounds.pos.x;
   }
 
 }

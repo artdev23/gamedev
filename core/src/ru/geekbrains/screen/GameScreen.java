@@ -19,7 +19,9 @@ import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.Bullet;
 import ru.geekbrains.sprite.EnemyShip;
+import ru.geekbrains.sprite.GameOver;
 import ru.geekbrains.sprite.MainShip;
+import ru.geekbrains.sprite.NewGame;
 import ru.geekbrains.sprite.Star;
 import ru.geekbrains.utils.EnemyGenerator;
 
@@ -50,6 +52,9 @@ public class GameScreen
   private Sound bulletSound;
   private Sound explosionSound;
 
+  private GameOver gameOver;
+  private NewGame newGame;
+
   private static final int starCount = 128;
 
 
@@ -71,6 +76,9 @@ public class GameScreen
 
 	bgmusic = new BackgroundMusic();
 	bgmusic.play();
+
+	gameOver = new GameOver(atlas);
+	newGame = new NewGame(atlas, this);
 
 	state = State.PLAYING;
   }
@@ -136,6 +144,11 @@ public class GameScreen
 	  bulletPool.drawActiveSprites(batch);
 	  ship.draw(batch);
 	  enemyPool.drawActiveSprites(batch);
+	}
+	else if (state == State.GAME_OVER)
+	{
+	  gameOver.draw(batch);
+	  newGame.draw(batch);
 	}
 
 	explosionPool.drawActiveSprites(batch);
@@ -287,36 +300,56 @@ public class GameScreen
   @Override
   public boolean keyDown(int keycode)
   {
-	if (state != State.PLAYING) return false;
+	if (state == State.PLAYING)
+	  ship.keyDown(keycode);
 
-	return ship.keyDown(keycode);
+	return false;
   }
 
 
   @Override
   public boolean keyUp(int keycode)
   {
-	if (state != State.PLAYING) return false;
+	if (state == State.PLAYING)
+	  ship.keyUp(keycode);
 
-	return ship.keyUp(keycode);
+	return false;
   }
 
 
   @Override
   public boolean touchDown(Vector2 touch, int pointer)
   {
-	if (state != State.PLAYING) return false;
+	if (state == State.PLAYING)
+	  ship.touchDown(touch, pointer);
+	else if (state == State.GAME_OVER)
+	  newGame.touchDown(touch, pointer);
 
-	return ship.touchDown(touch, pointer);
+	return false;
   }
 
 
   @Override
   public boolean touchUp(Vector2 touch, int pointer)
   {
-	if (state != State.PLAYING) return false;
+	if (state == State.PLAYING)
+	  ship.touchUp(touch, pointer);
+	else if (state == State.GAME_OVER)
+	  newGame.touchUp(touch, pointer);
 
-	return ship.touchUp(touch, pointer);
+	return false;
+  }
+
+
+  public void reset()
+  {
+	ship.reset();
+
+	state = State.PLAYING;
+
+	bulletPool.freeAllActiveSprites();
+	enemyPool.freeAllActiveSprites();
+	explosionPool.freeAllActiveSprites();
   }
 
 
