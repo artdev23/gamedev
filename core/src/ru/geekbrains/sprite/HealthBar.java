@@ -11,15 +11,14 @@ import ru.geekbrains.base.Sprite;
 import ru.geekbrains.screen.GameScreen;
 
 import static com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888;
-import static java.lang.Math.abs;
 
 
 public class HealthBar
 		extends Sprite
 {
 
-  private float pprev = 0;
-  private final int hpFull;
+  private int hpFull;
+  private int hpCur;
   private final Bar bar;
 
   private static final float HEIGHT = 0.04f;
@@ -31,6 +30,7 @@ public class HealthBar
   {
 	this.screen = screen;
 	hpFull = hp;
+	hpCur = hp;
 
 	Pixmap pixmap = new Pixmap(100, 10, RGBA8888);
 	pixmap.setColor(BGCOLOR);
@@ -47,19 +47,17 @@ public class HealthBar
 
   public void update(float delta, int hp)
   {
-	super.update(delta);
-
 	bar.setLeft(getLeft());
 	bar.setTop(getTop());
 
+	if (hpCur == hp) return;
+
+	super.update(delta);
+
 	float p = (float) hp / hpFull;
+	bar.setWidth(bar.getWidth() * p);
 
-	if (pprev != 0 && abs(pprev - p) > 0.01)
-	{
-	  bar.setWidth(bar.getWidth() * p);
-	}
-
-	pprev = (float) hp / hpFull;
+	hpCur = hp;
   }
 
 
@@ -69,6 +67,16 @@ public class HealthBar
 	super.draw(batch);
 
 	bar.draw(batch);
+  }
+
+
+  public void reset(int hp)
+  {
+	hpFull = hp;
+	hpCur = hp;
+	bar.setWidth(getWidth());
+	bar.setLeft(getLeft());
+	bar.setTop(getTop());
   }
 
 

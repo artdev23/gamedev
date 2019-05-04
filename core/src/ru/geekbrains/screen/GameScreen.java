@@ -162,8 +162,8 @@ public class GameScreen
 	{
 	  bulletPool.drawActiveSprites(batch);
 	  ship.draw(batch);
-	  hp.draw(batch);
 	  enemyPool.drawActiveSprites(batch);
+	  hp.draw(batch);
 	}
 	else if (state == State.GAME_OVER)
 	{
@@ -361,6 +361,7 @@ public class GameScreen
   public void reset()
   {
 	ship.reset();
+	hp.reset(ship.getHp());
 
 	bulletPool.freeAllActiveSprites();
 	enemyPool.freeAllActiveSprites();
