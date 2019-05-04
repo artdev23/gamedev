@@ -2,31 +2,30 @@ package ru.geekbrains.screen;
 
 
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.List;
 
-import ru.geekbrains.audio.BackgroundMusic;
+import ru.geekbrains.StarGame;
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
 import ru.geekbrains.pool.EnemyShipPool;
 import ru.geekbrains.pool.ExplosionPool;
-import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.Bullet;
 import ru.geekbrains.sprite.EnemyShip;
-import ru.geekbrains.sprite.GameOver;
+import ru.geekbrains.sprite.GameBackground;
 import ru.geekbrains.sprite.MainShip;
-import ru.geekbrains.sprite.NewGame;
-import ru.geekbrains.sprite.Star;
 import ru.geekbrains.utils.EnemyGenerator;
+import ru.geekbrains.utils.Font;
 
 import static com.badlogic.gdx.Gdx.audio;
 import static com.badlogic.gdx.Gdx.files;
+import static com.badlogic.gdx.Input.Keys;
+import static com.badlogic.gdx.utils.Align.center;
 
 
 public class GameScreen
@@ -35,15 +34,13 @@ public class GameScreen
 
   private State state;
 
-  private TextureAtlas atlas;
-  private BackgroundMusic bgmusic;
-  private Texture bg;
-  private Background background;
-  private Star[] stars;
+  private final TextureAtlas atlas;
+  private final TextureAtlas atlasShips;
+  private final GameBackground background;
+  private final Font font;
+  private final Font fontGameOver;
 
-  private Texture txr;
   private MainShip ship;
-
   private BulletPool bulletPool;
   private EnemyShipPool enemyPool;
   private ExplosionPool explosionPool;
@@ -52,10 +49,62 @@ public class GameScreen
   private Sound bulletSound;
   private Sound explosionSound;
 
-  private GameOver gameOver;
-  private NewGame newGame;
+  private static final float FontSize = 0.015f;
+  private static final String GAME_OVER = "GAME\nOVER";
+  private static final String PRESS_ENTER = "PRESS ENTER";
 
-  private static final int starCount = 128;
+
+  public GameScreen(StarGame game)
+  {
+	super(game);
+
+	atlas = new TextureAtlas("textures/mainAtlas.tpack");
+	atlasShips = new TextureAtlas("textures/shipsAtlas.pack");
+	background = new GameBackground(atlas);
+
+	font = new Font("font/font.fnt", "font/font.png");
+	font.setFontSize(FontSize);
+
+	fontGameOver = new Font("font/font.fnt", "font/font.png");
+	fontGameOver.setFontSize(0.1f);
+	fontGameOver.setColor(new Color(0.8f, 0.8f, 0.1f, 1));
+
+	initGameObjects();
+  }
+
+
+  private void initGameObjects()
+  {
+	AtlasRegion bulReg = atlas.findRegion("bulletMainShip");
+	AtlasRegion bulEnemyReg = atlas.findRegion("bulletEnemy");
+	bulletSound = audio.newSound(files.internal("audio/laser.wav"));
+	explosionSound = audio.newSound(files.internal("audio/explosion.wav"));
+
+	bulletPool = new BulletPool();
+	explosionPool = new ExplosionPool(atlas, explosionSound);
+	enemyPool = new EnemyShipPool(bulletPool, bulletSound, explosionPool, worldBounds);
+	enemyGenerator = new EnemyGenerator(atlasShips, bulEnemyReg, enemyPool, worldBounds);
+
+	ship = new MainShip(atlasShips, bulReg, bulletPool, bulletSound, explosionPool);
+  }
+
+
+  @Override
+  public void dispose()
+  {
+	super.dispose();
+
+	atlas.dispose();
+	atlasShips.dispose();
+	background.dispose();
+	font.dispose();
+	fontGameOver.dispose();
+	bulletSound.dispose();
+	explosionSound.dispose();
+	bulletPool.dispose();
+	explosionPool.dispose();
+	enemyPool.dispose();
+  }
 
 
   @Override
@@ -63,44 +112,7 @@ public class GameScreen
   {
 	super.show();
 
-	atlas = new TextureAtlas("textures/mainAtlas.tpack");
-
-	initGameObjects();
-
-	bg = new Texture("textures/background.png");
-	background = new Background(new TextureRegion(bg));
-
-	stars = new Star[starCount];
-	for (int i = 0; i < starCount; i++)
-	  stars[i] = new Star(atlas);
-
-	bgmusic = new BackgroundMusic();
-	bgmusic.play();
-
-	gameOver = new GameOver(atlas);
-	newGame = new NewGame(atlas, this);
-
 	state = State.PLAYING;
-  }
-
-
-  private void initGameObjects()
-  {
-	txr = new Texture("textures/ship.png");
-	TextureRegion reg = new TextureRegion(txr);
-
-	AtlasRegion bulReg = atlas.findRegion("bulletMainShip");
-
-	bulletSound = audio.newSound(files.internal("audio/laser.wav"));
-	explosionSound = audio.newSound(files.internal("audio/explosion.wav"));
-
-	bulletPool = new BulletPool();
-	explosionPool = new ExplosionPool(atlas, explosionSound);
-
-	ship = new MainShip(reg, bulReg, bulletPool, bulletSound, explosionPool);
-
-	enemyPool = new EnemyShipPool(bulletPool, bulletSound, explosionPool, worldBounds, ship);
-	enemyGenerator = new EnemyGenerator(atlas, enemyPool, worldBounds);
   }
 
 
@@ -118,7 +130,7 @@ public class GameScreen
 
   private void update(float delta)
   {
-	for (Star s : stars) s.update(delta);
+	background.update(delta);
 
 	explosionPool.updateActiveSprites(delta);
 
@@ -137,7 +149,6 @@ public class GameScreen
 	batch.begin();
 
 	background.draw(batch);
-	for (Star s : stars) s.draw(batch);
 
 	if (state == State.PLAYING)
 	{
@@ -147,8 +158,8 @@ public class GameScreen
 	}
 	else if (state == State.GAME_OVER)
 	{
-	  gameOver.draw(batch);
-	  newGame.draw(batch);
+	  fontGameOver.draw(batch, GAME_OVER, worldBounds.pos.x, worldBounds.pos.y, center);
+	  font.draw(batch, PRESS_ENTER, worldBounds.pos.x, worldBounds.getBottom() + 0.1f, center);
 	}
 
 	explosionPool.drawActiveSprites(batch);
@@ -252,7 +263,6 @@ public class GameScreen
 	super.resize(worldBounds);
 
 	background.resize(worldBounds);
-	for (Star s : stars) s.resize(worldBounds);
 
 	if (state == State.PLAYING)
 	  ship.resize(worldBounds);
@@ -265,7 +275,10 @@ public class GameScreen
 	super.pause();
 
 	if (state == State.PLAYING)
+	{
 	  state = State.PAUSE;
+	  game.switchToMenu();
+	}
   }
 
 
@@ -280,28 +293,23 @@ public class GameScreen
 
 
   @Override
-  public void dispose()
-  {
-	super.dispose();
-
-	bg.dispose();
-	bgmusic.dispose();
-	atlas.dispose();
-	txr.dispose();
-	bulletPool.dispose();
-	enemyPool.dispose();
-	explosionPool.dispose();
-	enemyGenerator.dispose();
-	bulletSound.dispose();
-	explosionSound.dispose();
-  }
-
-
-  @Override
   public boolean keyDown(int keycode)
   {
 	if (state == State.PLAYING)
-	  ship.keyDown(keycode);
+	  switch (keycode)
+	  {
+		case Keys.ESCAPE:
+		  pause();
+		  break;
+
+		default:
+		  ship.keyDown(keycode);
+	  }
+	else if (state == State.GAME_OVER)
+	{
+	  if (keycode == Keys.ENTER)
+		reset();
+	}
 
 	return false;
   }
@@ -322,8 +330,6 @@ public class GameScreen
   {
 	if (state == State.PLAYING)
 	  ship.touchDown(touch, pointer);
-	else if (state == State.GAME_OVER)
-	  newGame.touchDown(touch, pointer);
 
 	return false;
   }
@@ -334,8 +340,6 @@ public class GameScreen
   {
 	if (state == State.PLAYING)
 	  ship.touchUp(touch, pointer);
-	else if (state == State.GAME_OVER)
-	  newGame.touchUp(touch, pointer);
 
 	return false;
   }

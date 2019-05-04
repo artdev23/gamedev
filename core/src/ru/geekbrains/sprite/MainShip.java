@@ -3,6 +3,7 @@ package ru.geekbrains.sprite;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
@@ -22,25 +23,25 @@ public class MainShip
   private int leftPointer = INVALID_POINTER;
 
   private static final float HEIGHT = 0.1f;
-  private static final int INVALID_POINTER = -1;
   private static final float BULLET_HEIGHT = 0.005f;
   private static final int enemyCollisionDamage = 50;
   private static final int HP = 100;
+  private static final int INVALID_POINTER = -1;
 
 
-  public MainShip(TextureRegion region, TextureRegion bulletRegion, BulletPool bulletPool,
+  public MainShip(TextureAtlas atlasShips, TextureRegion bulletRegion, BulletPool bulletPool,
 				  Sound shootSound, ExplosionPool explosionPool)
   {
-	super(region);
+	super(atlasShips.findRegion("ship"));
 
 	this.bulletPool = bulletPool;
 	this.bulletRegion = bulletRegion;
 	this.shootSound = shootSound;
 	this.explosionPool = explosionPool;
-	reloadInterval = 0.1f;
-	bulletV.set(0f, 0.5f);
 	bulletHeight = BULLET_HEIGHT;
-	damage = 10;
+	bulletV.set(0, 0.5f);
+	reloadInterval = 0.1f;
+	damage = 1;
 	hp = HP;
 	setHeightProportion(HEIGHT);
   }

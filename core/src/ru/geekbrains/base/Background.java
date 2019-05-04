@@ -1,10 +1,10 @@
-package ru.geekbrains.sprite;
+package ru.geekbrains.base;
 
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import ru.geekbrains.base.Sprite;
 import ru.geekbrains.math.Rect;
 
 
@@ -12,9 +12,9 @@ public class Background
 		extends Sprite
 {
 
-  public Background(TextureRegion region)
+  public Background(Texture bgImage)
   {
-	super(region);
+	super(new TextureRegion(bgImage));
   }
 
 
@@ -40,6 +40,11 @@ public class Background
 	batch.disableBlending();
 	super.draw(batch);
 	batch.enableBlending();
+  }
+
+
+  public void dispose()
+  {
   }
 
 }

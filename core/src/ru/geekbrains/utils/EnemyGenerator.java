@@ -1,7 +1,6 @@
 package ru.geekbrains.utils;
 
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -10,63 +9,70 @@ import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.EnemyShipPool;
 import ru.geekbrains.sprite.EnemyShip;
 
+import static java.lang.Math.random;
 import static ru.geekbrains.math.Rnd.nextFloat;
 
 
 public class EnemyGenerator
 {
 
-  private final Texture txrSmall = new Texture("textures/enemy1.png");
-  private final TextureRegion[] enemySmallRegion = {new TextureRegion(txrSmall)};
-
-  private final TextureRegion[] enemyMediumRegion;
-  private final TextureRegion[] enemyBigRegion;
-
-  private final Vector2 enemySmallV = new Vector2(0, -0.2f);
-  private final Vector2 enemyMediumV = new Vector2(0, -0.03f);
-  private final Vector2 enemyBigV = new Vector2(0, -0.005f);
-
-  private final TextureRegion bulletRegion;
-
   private final EnemyShipPool enemyPool;
-
-  private static final float ENEMY_SMALL_HEIGHT = 0.1f;
-  private static final float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
-  private static final float ENEMY_SMALL_BULLET_VY = -0.3f;
-  private static final int ENEMY_SMALL_DAMAGE = 50;
-  private static final float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
-  private static final int ENEMY_SMALL_HP = 100;
-
-  private static final float ENEMY_MEDIUM_HEIGHT = 0.1f;
-  private static final float ENEMY_MEDIUM_BULLET_HEIGHT = 0.02f;
-  private static final float ENEMY_MEDIUM_BULLET_VY = -0.25f;
-  private static final int ENEMY_MEDIUM_DAMAGE = 5;
-  private static final float ENEMY_MEDIUM_RELOAD_INTERVAL = 4f;
-  private static final int ENEMY_MEDIUM_HP = 5;
-
-  private static final float ENEMY_BIG_HEIGHT = 0.2f;
-  private static final float ENEMY_BIG_BULLET_HEIGHT = 0.04f;
-  private static final float ENEMY_BIG_BULLET_VY = -0.3f;
-  private static final int ENEMY_BIG_DAMAGE = 10;
-  private static final float ENEMY_BIG_RELOAD_INTERVAL = 1f;
-  private static final int ENEMY_BIG_HP = 10;
-
+  private final TextureRegion bulletRegion;
   private Rect worldBounds;
-
   private float generateInterval = 4;
   private float timer;
 
+  private static final EnemyParams enemy1 = new EnemyParams();
+  private static final EnemyParams enemy2 = new EnemyParams();
+  private static final EnemyParams enemy3 = new EnemyParams();
+  private static final EnemyParams enemy4 = new EnemyParams();
 
-  public EnemyGenerator(TextureAtlas atlas, EnemyShipPool enemyPool, Rect worldBounds)
+
+  static
   {
-//	TextureRegion enemy0 = atlas.findRegion("enemy0");
-//	this.enemySmallRegion = Regions.split(enemy0, 1, 2, 2);
-	TextureRegion enemy1 = atlas.findRegion("enemy1");
-	this.enemyMediumRegion = Regions.split(enemy1, 1, 2, 2);
-	TextureRegion enemy2 = atlas.findRegion("enemy2");
-	this.enemyBigRegion = Regions.split(enemy2, 1, 2, 2);
+	enemy1.V = new Vector2(0, -0.15f);
+	enemy1.BULLET_VY = -0.2f;
+	enemy1.HEIGHT = 0.08f;
+	enemy1.BULLET_HEIGHT = 0.005f;
+	enemy1.RELOAD_INTERVAL = 2;
+	enemy1.DAMAGE = 4;
+	enemy1.HP = 4;
 
-	this.bulletRegion = atlas.findRegion("bulletEnemy");
+	enemy2.V = new Vector2(0, -0.1f);
+	enemy2.BULLET_VY = -0.25f;
+	enemy2.HEIGHT = 0.10f;
+	enemy2.BULLET_HEIGHT = 0.008f;
+	enemy2.RELOAD_INTERVAL = 1;
+	enemy2.DAMAGE = 8;
+	enemy2.HP = 8;
+
+	enemy3.V = new Vector2(0, -0.08f);
+	enemy3.BULLET_VY = -0.3f;
+	enemy3.HEIGHT = 0.15f;
+	enemy3.BULLET_HEIGHT = 0.01f;
+	enemy3.RELOAD_INTERVAL = 0.5f;
+	enemy3.DAMAGE = 16;
+	enemy3.HP = 16;
+
+	enemy4.V = new Vector2(0, -0.05f);
+	enemy4.BULLET_VY = -0.4f;
+	enemy4.HEIGHT = 0.2f;
+	enemy4.BULLET_HEIGHT = 0.02f;
+	enemy4.RELOAD_INTERVAL = 0.2f;
+	enemy4.DAMAGE = 32;
+	enemy4.HP = 32;
+  }
+
+
+  public EnemyGenerator(TextureAtlas atlas, TextureRegion bulletRegion, EnemyShipPool enemyPool,
+						Rect worldBounds)
+  {
+	enemy1.Region = atlas.findRegion("enemy1");
+	enemy2.Region = atlas.findRegion("enemy2");
+	enemy3.Region = atlas.findRegion("enemy3");
+	enemy4.Region = atlas.findRegion("enemy4");
+
+	this.bulletRegion = bulletRegion;
 	this.enemyPool = enemyPool;
 	this.worldBounds = worldBounds;
   }
@@ -86,25 +92,33 @@ public class EnemyGenerator
   private void createEnemy()
   {
 	EnemyShip enemy = enemyPool.obtain();
+
+	double type = random();
+	if (type < 0.5)
+	  enemy.set(bulletRegion, enemy1);
+	else if (type < 0.75)
+	  enemy.set(bulletRegion, enemy2);
+	else if (type < 0.88)
+	  enemy.set(bulletRegion, enemy3);
+	else
+	  enemy.set(bulletRegion, enemy4);
+
 	enemy.pos.x = nextFloat(worldBounds.getLeft(), worldBounds.getRight());
 	enemy.setBottom(worldBounds.getTop());
-	enemy.set(
-			enemySmallRegion,
-			enemySmallV,
-			bulletRegion,
-			ENEMY_SMALL_BULLET_HEIGHT,
-			ENEMY_SMALL_BULLET_VY,
-			ENEMY_SMALL_DAMAGE,
-			ENEMY_SMALL_RELOAD_INTERVAL,
-			ENEMY_SMALL_HEIGHT,
-			ENEMY_SMALL_HP
-	);
   }
 
 
-  public void dispose()
+  public static class EnemyParams
   {
-	txrSmall.dispose();
+
+	public TextureRegion Region;
+	public Vector2 V;
+	public float HEIGHT;
+	public float BULLET_VY;
+	public float BULLET_HEIGHT;
+	public float RELOAD_INTERVAL;
+	public int HP;
+	public int DAMAGE;
   }
 
 }

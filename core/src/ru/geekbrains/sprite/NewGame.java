@@ -19,7 +19,7 @@ public class NewGame
 
   public NewGame(TextureAtlas atlas, GameScreen screen)
   {
-	super(atlas.findRegion("button_new_game"));
+	super(atlas.findRegion("button_new_game"), screen);
 	setHeightProportion(HEIGHT);
 	setTop(TOP);
 	this.screen = screen;

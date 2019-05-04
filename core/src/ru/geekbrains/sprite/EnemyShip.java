@@ -9,6 +9,7 @@ import ru.geekbrains.base.Ship;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
 import ru.geekbrains.pool.ExplosionPool;
+import ru.geekbrains.utils.EnemyGenerator;
 
 
 public class EnemyShip
@@ -16,38 +17,35 @@ public class EnemyShip
 {
 
   private State state;
-  private Vector2 descentV;
-  private MainShip mainShip;
+
+  private static final Vector2 descentV = new Vector2(0, -0.3f);
 
 
-  public EnemyShip(MainShip mainShip, Rect worldBounds, BulletPool bulletPool,
+  public EnemyShip(Rect worldBounds, BulletPool bulletPool,
 				   Sound shootSound, ExplosionPool explosionPool)
   {
-	this.mainShip = mainShip;
 	this.worldBounds = worldBounds;
 	this.bulletPool = bulletPool;
 	this.shootSound = shootSound;
 	this.explosionPool = explosionPool;
-	descentV = new Vector2(0, -0.3f);
-	angle = -90;
   }
 
 
-  public void set(TextureRegion[] regions, Vector2 v0, TextureRegion bulletRegion,
-				  float bulletHeight, float bulletVY, int damage,
-				  float reloadInterval, float height, int hp)
+  public void set(TextureRegion bulletRegion, EnemyGenerator.EnemyParams par)
   {
-	this.regions = regions;
-	this.v0.set(v0);
 	this.bulletRegion = bulletRegion;
-	this.bulletHeight = bulletHeight;
-	this.bulletV.set(0, bulletVY);
-	this.damage = damage;
-	this.reloadInterval = reloadInterval;
-	setHeightProportion(height);
-	this.hp = hp;
-	v.set(descentV);
+
+	regions = new TextureRegion[]{par.Region};
+	setHeightProportion(par.HEIGHT);
+	bulletHeight = par.BULLET_HEIGHT;
+	v0.set(par.V);
+	bulletV.set(0, par.BULLET_VY);
+	reloadInterval = par.RELOAD_INTERVAL;
+	damage = par.DAMAGE;
+	hp = par.HP;
+
 	reloadTimer = reloadInterval;
+	v.set(descentV);
 	state = State.DESCENT;
   }
 

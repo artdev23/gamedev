@@ -142,6 +142,12 @@ public class Rect
   }
 
 
+  public boolean isMe(int x, int y)
+  {
+	return x >= getLeft() && x <= getRight() && y >= getBottom() && y <= getTop();
+  }
+
+
   public boolean isOutside(Rect other)
   {
 	return getLeft() > other.getRight() || getRight() < other.getLeft()

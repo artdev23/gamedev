@@ -1,10 +1,13 @@
 package ru.geekbrains.sprite;
 
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.base.ScaledTouchUpButton;
 import ru.geekbrains.math.Rect;
+import ru.geekbrains.utils.Font;
 
 import static com.badlogic.gdx.Gdx.app;
 
@@ -13,13 +16,17 @@ public class ExitButton
 		extends ScaledTouchUpButton
 {
 
-  private static final float height = 0.15f;
-  private static final float MARGIN = 0.02f;
+  private static final float height = 0.2f;
+  private static final float FontSize = 0.04f;
 
 
-  public ExitButton(TextureAtlas atlas)
+  public ExitButton(BaseScreen scr, Texture txr)
   {
-	super(atlas.findRegion("btExit"));
+	super(new TextureRegion(txr), scr);
+
+	text = "QUIT";
+	font = new Font("font/font.fnt", "font/font.png");
+	font.setFontSize(FontSize);
 	setHeightProportion(height);
   }
 
@@ -28,8 +35,6 @@ public class ExitButton
   public void resize(Rect worldBounds)
   {
 	super.resize(worldBounds);
-	setBottom(worldBounds.getBottom() + MARGIN);
-	setRight(worldBounds.getRight() - MARGIN);
   }
 
 

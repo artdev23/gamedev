@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
+import ru.geekbrains.StarGame;
 import ru.geekbrains.math.Rect;
 
 import static com.badlogic.gdx.Gdx.gl;
@@ -30,6 +31,23 @@ public abstract class BaseScreen
   private Matrix4 worldToGl;
   private Matrix3 screenToWorld;
   private Vector2 touch;
+  protected StarGame game;
+
+
+  public BaseScreen(StarGame game)
+  {
+	this.game = game;
+
+	batch = new SpriteBatch();
+
+	worldBounds = new Rect();
+	worldBounds.setHeight(1f);
+	screenBounds = new Rect();
+	glBounds = new Rect(0, 0, 1f, 1f);
+	worldToGl = new Matrix4();
+	screenToWorld = new Matrix3();
+	touch = new Vector2();
+  }
 
 
   @Override
@@ -37,16 +55,7 @@ public abstract class BaseScreen
   {
 	out.println("show");
 
-	batch = new SpriteBatch();
-
 	input.setInputProcessor(this);
-
-	worldBounds = new Rect();
-	screenBounds = new Rect();
-	glBounds = new Rect(0, 0, 1f, 1f);
-	worldToGl = new Matrix4();
-	screenToWorld = new Matrix3();
-	touch = new Vector2();
   }
 
 
@@ -67,7 +76,6 @@ public abstract class BaseScreen
 	screenBounds.setBottom(0);
 
 	float aspect = width / (float) height;
-	worldBounds.setHeight(1f);
 	worldBounds.setWidth(1f * aspect);
 	worldToGl = getTransitionMatrix4(worldBounds, glBounds);
 	batch.setProjectionMatrix(worldToGl);
@@ -100,7 +108,7 @@ public abstract class BaseScreen
   public void hide()
   {
 	out.println("hide");
-	dispose();
+//	dispose();
   }
 
 

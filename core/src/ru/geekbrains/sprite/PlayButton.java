@@ -1,29 +1,33 @@
 package ru.geekbrains.sprite;
 
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import ru.geekbrains.StarGame;
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.base.ScaledTouchUpButton;
 import ru.geekbrains.math.Rect;
-import ru.geekbrains.screen.GameScreen;
+import ru.geekbrains.utils.Font;
 
 
 public class PlayButton
 		extends ScaledTouchUpButton
 {
 
-  private Game game;
+  private StarGame game;
   private static final float height = 0.2f;
-  private static final float MARGIN = 0.02f;
+  private static final float FontSize = 0.03f;
 
 
-  public PlayButton(TextureAtlas atlas, Game game)
+  public PlayButton(BaseScreen scr, Texture txr, StarGame game)
   {
-	super(atlas.findRegion("btPlay"));
+	super(new TextureRegion(txr), scr);
 
 	this.game = game;
+	text = "PLAY GAME";
+	font = new Font("font/font.fnt", "font/font.png");
+	font.setFontSize(FontSize);
 	setHeightProportion(height);
   }
 
@@ -32,16 +36,13 @@ public class PlayButton
   public void resize(Rect worldBounds)
   {
 	super.resize(worldBounds);
-	setBottom(worldBounds.getBottom() + MARGIN);
-	setLeft(worldBounds.getLeft() + MARGIN);
   }
 
 
   @Override
   protected void action()
   {
-	BaseScreen screen = new GameScreen();
-	game.setScreen(screen);
+	game.switchToGame();
   }
 
 }
