@@ -18,13 +18,15 @@ import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Bullet;
 import ru.geekbrains.sprite.EnemyShip;
 import ru.geekbrains.sprite.GameBackground;
+import ru.geekbrains.sprite.HealthBar;
 import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.utils.EnemyGenerator;
 import ru.geekbrains.utils.Font;
 
 import static com.badlogic.gdx.Gdx.audio;
 import static com.badlogic.gdx.Gdx.files;
-import static com.badlogic.gdx.Input.Keys;
+import static com.badlogic.gdx.Input.Keys.ENTER;
+import static com.badlogic.gdx.Input.Keys.ESCAPE;
 import static com.badlogic.gdx.utils.Align.center;
 
 
@@ -41,6 +43,7 @@ public class GameScreen
   private final Font fontGameOver;
 
   private MainShip ship;
+  private HealthBar hp;
   private BulletPool bulletPool;
   private EnemyShipPool enemyPool;
   private ExplosionPool explosionPool;
@@ -86,6 +89,7 @@ public class GameScreen
 	enemyGenerator = new EnemyGenerator(atlasShips, bulEnemyReg, enemyPool, worldBounds);
 
 	ship = new MainShip(atlasShips, bulReg, bulletPool, bulletSound, explosionPool);
+	hp = new HealthBar(this, ship.getHp());
   }
 
 
@@ -112,6 +116,9 @@ public class GameScreen
   {
 	super.show();
 
+	hp.setTop(worldBounds.getTop() - 0.004f);
+	hp.setAlignHoriz(center);
+
 	state = State.PLAYING;
   }
 
@@ -137,6 +144,7 @@ public class GameScreen
 	if (state == State.PLAYING)
 	{
 	  ship.update(delta);
+	  hp.update(delta, ship.getHp());
 	  enemyGenerator.generate(delta);
 	  bulletPool.updateActiveSprites(delta);
 	  enemyPool.updateActiveSprites(delta);
@@ -154,12 +162,17 @@ public class GameScreen
 	{
 	  bulletPool.drawActiveSprites(batch);
 	  ship.draw(batch);
+	  hp.draw(batch);
 	  enemyPool.drawActiveSprites(batch);
 	}
 	else if (state == State.GAME_OVER)
 	{
-	  fontGameOver.draw(batch, GAME_OVER, worldBounds.pos.x, worldBounds.pos.y, center);
-	  font.draw(batch, PRESS_ENTER, worldBounds.pos.x, worldBounds.getBottom() + 0.1f, center);
+	  float x = worldBounds.pos.x;
+	  float y = worldBounds.pos.y + fontGameOver.getXHeight() * 2;
+	  fontGameOver.draw(batch, GAME_OVER, x, y, center);
+
+	  y = worldBounds.getBottom() + 0.1f;
+	  font.draw(batch, PRESS_ENTER, x, y, center);
 	}
 
 	explosionPool.drawActiveSprites(batch);
@@ -298,7 +311,7 @@ public class GameScreen
 	if (state == State.PLAYING)
 	  switch (keycode)
 	  {
-		case Keys.ESCAPE:
+		case ESCAPE:
 		  pause();
 		  break;
 
@@ -307,7 +320,7 @@ public class GameScreen
 	  }
 	else if (state == State.GAME_OVER)
 	{
-	  if (keycode == Keys.ENTER)
+	  if (keycode == ENTER)
 		reset();
 	}
 
@@ -349,11 +362,11 @@ public class GameScreen
   {
 	ship.reset();
 
-	state = State.PLAYING;
-
 	bulletPool.freeAllActiveSprites();
 	enemyPool.freeAllActiveSprites();
 	explosionPool.freeAllActiveSprites();
+
+	state = State.PLAYING;
   }
 
 

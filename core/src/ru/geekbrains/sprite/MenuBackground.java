@@ -10,7 +10,7 @@ public class MenuBackground
 		extends Background
 {
 
-  private static Texture img = new Texture("textures/menuBg.jpg");
+  private static final Texture img = new Texture("textures/menuBg.jpg");
 
 
   public MenuBackground()

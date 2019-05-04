@@ -18,7 +18,6 @@ public abstract class ScaledTouchUpButton
   private boolean pressed;
   protected String text;
   protected Font font;
-  protected final BaseScreen screen;
 
   private static final float PRESS_SCALE = 0.9f;
   private static final Color PRESS_COLOR = new Color(0.8f, 0.1f, 0.8f, 1);
@@ -26,28 +25,7 @@ public abstract class ScaledTouchUpButton
 
   public ScaledTouchUpButton(TextureRegion region, BaseScreen scr)
   {
-	super(region);
-
-	screen = scr;
-  }
-
-
-  public void setAlignHoriz(int align)
-  {
-	switch (align)
-	{
-	  case Align.center:
-		pos.x = screen.worldBounds.pos.x;
-		break;
-	  case Align.left:
-		pos.x = screen.worldBounds.getLeft();
-		break;
-	  case Align.right:
-		pos.x = screen.worldBounds.getRight();
-		break;
-	  default:
-		break;
-	}
+	super(region, scr);
   }
 
 

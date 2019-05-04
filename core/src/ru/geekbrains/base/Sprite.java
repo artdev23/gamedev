@@ -4,6 +4,7 @@ package ru.geekbrains.base;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 
 import ru.geekbrains.math.Rect;
 
@@ -19,6 +20,7 @@ public class Sprite
   protected float scale = 1f;
   protected TextureRegion[] regions;
   protected int frame;
+  protected BaseScreen screen;
 
 
   public Sprite()
@@ -36,6 +38,14 @@ public class Sprite
   public Sprite(TextureRegion region, int rows, int cols, int frames)
   {
 	this.regions = split(region, rows, cols, frames);
+  }
+
+
+  public Sprite(TextureRegion region, BaseScreen scr)
+  {
+	this(region);
+
+	screen = scr;
   }
 
 
@@ -131,6 +141,25 @@ public class Sprite
   public boolean isDestroyed()
   {
 	return isDestroyed;
+  }
+
+
+  public void setAlignHoriz(int align)
+  {
+	switch (align)
+	{
+	  case Align.center:
+		pos.x = screen.worldBounds.pos.x;
+		break;
+	  case Align.left:
+		pos.x = screen.worldBounds.getLeft();
+		break;
+	  case Align.right:
+		pos.x = screen.worldBounds.getRight();
+		break;
+	  default:
+		break;
+	}
   }
 
 }

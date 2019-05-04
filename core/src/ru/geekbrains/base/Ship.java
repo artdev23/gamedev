@@ -27,6 +27,14 @@ public class Ship
   protected float bulletHeight;
 
   protected int damage;
+
+
+  public int getHp()
+  {
+	return hp;
+  }
+
+
   protected int hp;
   protected float reloadInterval;
   protected float reloadTimer;

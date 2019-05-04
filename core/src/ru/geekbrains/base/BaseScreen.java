@@ -30,6 +30,7 @@ public abstract class BaseScreen
   private Rect glBounds;
   private Matrix4 worldToGl;
   private Matrix3 screenToWorld;
+  private Matrix3 worldToScreen;
   private Vector2 touch;
   protected StarGame game;
 
@@ -80,6 +81,7 @@ public abstract class BaseScreen
 	worldToGl = getTransitionMatrix4(worldBounds, glBounds);
 	batch.setProjectionMatrix(worldToGl);
 	screenToWorld = getTransitionMatrix3(screenBounds, worldBounds);
+	worldToScreen = getTransitionMatrix3(worldBounds, screenBounds);
 	resize(worldBounds);
   }
 

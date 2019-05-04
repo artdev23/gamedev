@@ -14,10 +14,10 @@ public class GameBackground
 		extends Background
 {
 
-  private Star[] stars;
+  private final Star[] stars;
 
-  private static Texture img = new Texture("textures/background.png");
-  private static BackgroundMusic music = new BackgroundMusic("audio/music.mp3", 0.2f);
+  private static final Texture img = new Texture("textures/background.png");
+  private static final BackgroundMusic music = new BackgroundMusic("audio/music.mp3", 0.2f);
   private static final int starCount = 128;
 
 
