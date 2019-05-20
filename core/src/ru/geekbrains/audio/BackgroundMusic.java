@@ -13,15 +13,12 @@ public class BackgroundMusic
 
   private Music music;
 
-  private static final String PATH = "audio/music.mp3";
-  private static final float VOLUME = 0.2f;
 
-
-  public BackgroundMusic()
+  public BackgroundMusic(String path, float volume)
   {
-	FileHandle file = files.internal(PATH);
+	FileHandle file = files.internal(path);
 	music = audio.newMusic(file);
-	music.setVolume(VOLUME);
+	music.setVolume(volume);
 	music.setLooping(true);
   }
 
@@ -29,6 +26,12 @@ public class BackgroundMusic
   public void play()
   {
 	music.play();
+  }
+
+
+  public boolean isPlaying()
+  {
+	return music.isPlaying();
   }
 
 

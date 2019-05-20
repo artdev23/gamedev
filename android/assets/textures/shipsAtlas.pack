@@ -1,0 +1,75 @@
+
+shipsAtlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+enemy6
+  rotate: false
+  xy: 1, 1
+  size: 422, 969
+  orig: 422, 969
+  offset: 0, 0
+  index: -1
+enemy7
+  rotate: false
+  xy: 425, 305
+  size: 665, 665
+  orig: 665, 665
+  offset: 0, 0
+  index: -1
+enemy5
+  rotate: false
+  xy: 1092, 216
+  size: 548, 754
+  orig: 548, 754
+  offset: 0, 0
+  index: -1
+enemy8
+  rotate: false
+  xy: 1642, 370
+  size: 600, 600
+  orig: 600, 600
+  offset: 0, 0
+  index: -1
+enemy2
+  rotate: false
+  xy: 2244, 493
+  size: 348, 477
+  orig: 348, 477
+  offset: 0, 0
+  index: -1
+enemy4
+  rotate: false
+  xy: 2594, 598
+  size: 422, 372
+  orig: 422, 372
+  offset: 0, 0
+  index: -1
+boss
+  rotate: false
+  xy: 3018, 588
+  size: 350, 382
+  orig: 350, 382
+  offset: 0, 0
+  index: -1
+ship
+  rotate: false
+  xy: 3370, 569
+  size: 329, 401
+  orig: 329, 401
+  offset: 0, 0
+  index: -1
+enemy3
+  rotate: false
+  xy: 425, 29
+  size: 282, 274
+  orig: 282, 274
+  offset: 0, 0
+  index: -1
+enemy1
+  rotate: false
+  xy: 3701, 573
+  size: 149, 397
+  orig: 149, 397
+  offset: 0, 0
+  index: -1

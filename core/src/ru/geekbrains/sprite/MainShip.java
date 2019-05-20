@@ -3,12 +3,14 @@ package ru.geekbrains.sprite;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.Ship;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 
 
 public class MainShip
@@ -21,24 +23,26 @@ public class MainShip
   private int leftPointer = INVALID_POINTER;
 
   private static final float HEIGHT = 0.1f;
-  private static final int INVALID_POINTER = -1;
   private static final float BULLET_HEIGHT = 0.005f;
+  private static final int enemyCollisionDamage = 50;
+  private static final int HP = 100;
+  private static final int INVALID_POINTER = -1;
 
 
-  public MainShip(TextureRegion region, TextureRegion bulletRegion, BulletPool bulletPool,
-				  Sound shootSound)
+  public MainShip(TextureAtlas atlasShips, TextureRegion bulletRegion, BulletPool bulletPool,
+				  Sound shootSound, ExplosionPool explosionPool)
   {
-	super(region);
+	super(atlasShips.findRegion("ship"));
 
 	this.bulletPool = bulletPool;
 	this.bulletRegion = bulletRegion;
 	this.shootSound = shootSound;
-	reloadInterval = 0.1f;
-	bulletV.set(0f, 0.5f);
+	this.explosionPool = explosionPool;
 	bulletHeight = BULLET_HEIGHT;
-	damage = 10;
-	hp = 100;
-//	v0.set(0.5f, 0);
+	bulletV.set(0, 0.5f);
+	reloadInterval = 0.1f;
+	damage = 1;
+	hp = HP;
 	setHeightProportion(HEIGHT);
   }
 
@@ -205,8 +209,17 @@ public class MainShip
 
   public void damage(EnemyShip e)
   {
-	hp -= 50;
+	hp -= enemyCollisionDamage;
 	checkHP();
+  }
+
+
+  public void reset()
+  {
+	stop();
+	flushDestroy();
+	hp = HP;
+	pos.x = worldBounds.pos.x;
   }
 
 }
